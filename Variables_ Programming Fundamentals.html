@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Variables: Programming Fundamentals</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14172b;--panel:#1e2340;--line:#343b6b;--tx:#eef0ff;--mut:#9aa3d6;--gold:#ffc233;--red:#ff5d6c;--cy:#4cc9f0;--grn:#5ee08a;--vio:#a78bfa;--code:#0d0f20;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f3f1ff;--panel:#fff;--line:#c9c6ee;--tx:#1a1d3a;--mut:#5b6091;--gold:#c98600;--red:#d63a4a;--cy:#0a86b0;--grn:#1d9a4d;--vio:#6d4fd6;--code:#eceaff}}
+:root[data-theme="dark"]{--bg:#14172b}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--tx);font:600 clamp(15px,1.9vw,19px)/1.55 Nunito,system-ui,sans-serif;overflow:hidden}
+.slide{position:absolute;inset:0 0 56px 0;padding:clamp(16px,4vw,48px) clamp(16px,6vw,80px);display:none;overflow-y:auto;flex-direction:column;justify-content:center;gap:16px}
+.slide.on{display:flex}
+h1,h2{font-family:"Press Start 2P",ui-monospace,monospace;line-height:1.4;margin:0;font-weight:400}
+h1{font-size:clamp(22px,5vw,52px);color:var(--gold)}
+h2{font-size:clamp(15px,2.8vw,28px);color:var(--cy)}
+p{margin:0;max-width:62ch;color:var(--tx)}
+.mut{color:var(--mut)}
+code,.code{font-family:ui-monospace,Menlo,Consolas,monospace}
+.code{background:var(--code);border:2px solid var(--line);border-radius:8px;padding:12px 16px;font-size:clamp(14px,2vw,20px);overflow-x:auto;white-space:pre}
+.k{color:var(--vio)}.n{color:var(--gold)}.s{color:var(--grn)}.v{color:var(--cy)}.b{color:var(--red)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.panel{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:14px 16px}
+button{font:800 1em Nunito,sans-serif;background:var(--panel);color:var(--tx);border:2px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer}
+button:hover{border-color:var(--cy)}
+button.p{background:var(--gold);color:#1a1200;border-color:var(--gold)}
+button.d{border-color:var(--red);color:var(--red)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+input[type=text],input[type=number]{font:700 1em ui-monospace,monospace;background:var(--code);color:var(--tx);border:2px solid var(--line);border-radius:8px;padding:8px 12px;width:min(260px,100%)}
+.hud{display:flex;flex-wrap:wrap;gap:10px}
+.stat{background:var(--panel);border:2px solid var(--line);border-radius:8px;padding:8px 14px;min-width:110px}
+.stat small{display:block;color:var(--mut);font-family:ui-monospace,monospace;font-size:.75em}
+.stat b{font:400 1.2em "Press Start 2P",monospace}
+.bar{height:18px;background:var(--code);border:2px solid var(--line);border-radius:6px;overflow:hidden;max-width:420px}
+.bar i{display:block;height:100%;background:var(--grn);transition:width .25s,background .25s}
+.box{width:150px;height:110px;border:3px solid var(--gold);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--panel);position:relative}
+.box .lbl{position:absolute;top:-14px;background:var(--bg);padding:0 8px;font-family:ui-monospace,monospace;color:var(--gold)}
+.box b{font:400 1.4em "Press Start 2P",monospace}
+.pop{animation:pop .3s}
+@keyframes pop{50%{transform:scale(1.15)}}
+@media (prefers-reduced-motion:reduce){.pop{animation:none}.bar i{transition:none}}
+.chip{font-family:ui-monospace,monospace;font-size:clamp(18px,3.4vw,34px);padding:8px 12px;border:2px dashed var(--line);border-radius:8px;background:var(--code)}
+.chip.a{border-color:var(--gold);border-style:solid}
+.tog{display:flex;align-items:center;gap:10px}
+.sw{width:52px;height:28px;border-radius:14px;background:var(--line);position:relative;cursor:pointer;border:0;padding:0}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .15s}
+.sw[aria-pressed=true]{background:var(--grn)}.sw[aria-pressed=true]::after{left:27px}
+.door{font-size:clamp(40px,8vw,72px)}
+.arena{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:420px}
+.cell{aspect-ratio:1;background:var(--code);border:2px solid var(--line);border-radius:8px;font-size:clamp(18px,4vw,30px);padding:0;display:flex;align-items:center;justify-content:center}
+table{border-collapse:collapse;width:100%;max-width:760px}
+th,td{border:2px solid var(--line);padding:8px 12px;text-align:left}
+th{background:var(--panel);color:var(--gold)}
+.ok{color:var(--grn)}.bad{color:var(--red)}
+.nav{position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0px);height:56px;background:var(--panel);border-top:2px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(12px,4vw,40px);gap:12px}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--gold)}
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <h1>Variables</h1>
+  <p class="mut">Programming Fundamentals, game edition. Every game runs on variables. Tap the buttons below and watch them change.</p>
+  <div class="hud">
+    <div class="stat"><small>score</small><b data-v="score">0</b></div>
+    <div class="stat"><small>health</small><b data-v="health">100</b></div>
+    <div class="stat"><small>lives</small><b data-v="lives">3</b></div>
+    <div class="stat"><small>coins</small><b data-v="coins">0</b></div>
+  </div>
+  <div class="row"><button class="p" onclick="G.score+=10;G.coins++;sync()">Collect coin</button><button class="d" onclick="G.health=Math.max(0,G.health-25);if(!G.health){G.lives=Math.max(0,G.lives-1);G.health=100}sync()">Take damage</button><button onclick="reset()">Reset</button></div>
+</section>
+
+<section class="slide">
+  <h2>What is a variable?</h2>
+  <p>A variable is a <b>named box</b> that stores a value. The name is the label. The value is what's inside. You can look inside or swap the value any time.</p>
+  <div class="row" style="gap:24px;align-items:flex-end">
+    <div class="box" id="bx"><span class="lbl">score</span><b id="bxv">0</b></div>
+    <div class="row"><input type="number" id="bxin" value="250" aria-label="New value"><button class="p" onclick="store()">Store value</button></div>
+  </div>
+  <div class="code" id="bxc"><span class="v">score</span> = <span class="n">0</span></div>
+</section>
+
+<section class="slide">
+  <h2>Anatomy of a variable</h2>
+  <p>Tap each part to see what it does.</p>
+  <div class="row" id="anat"></div>
+  <div class="panel" id="anatx" style="min-height:70px">Pick a piece of the line above.</div>
+</section>
+
+<section class="slide">
+  <h2>Numbers</h2>
+  <p>Numbers store anything you count or measure: score, health, coins. You can do math with them.</p>
+  <div class="hud">
+    <div class="stat"><small>score</small><b data-v="score">0</b></div>
+    <div class="stat"><small>coins</small><b data-v="coins">0</b></div>
+    <div class="stat"><small>health</small><b data-v="health">100</b></div>
+  </div>
+  <div class="bar"><i data-bar="health"></i></div>
+  <div class="row"><button class="p" onclick="run('score = score + 10','score',10)">+10 score</button><button class="p" onclick="run('coins = coins + 1','coins',1)">+1 coin</button><button class="d" onclick="run('health = health - 20','health',-20)">-20 health</button><button onclick="reset();$('lastn').textContent='Reset'">Reset</button></div>
+  <div class="code" id="lastn">Press a button to run a line</div>
+</section>
+
+<section class="slide">
+  <h2>Text (strings)</h2>
+  <p>Text goes inside quotes. Use it for names, messages and anything that isn't a number.</p>
+  <div class="row"><input type="text" id="nm" value="Player1" maxlength="16" aria-label="Player name" oninput="G.name=this.value;txt()"></div>
+  <div class="code" id="nmc"></div>
+  <div class="panel"><b id="nmg"></b><div class="mut" id="nml"></div></div>
+</section>
+
+<section class="slide">
+  <h2>Boolean: true or false</h2>
+  <p>A boolean has only two possible values. Games use them as switches to decide what happens next.</p>
+  <div class="row" style="gap:28px;align-items:flex-start">
+    <div style="display:grid;gap:12px">
+      <div class="tog"><button class="sw" aria-pressed="true" id="s1" aria-label="isAlive" onclick="bool('alive',this)"></button><code>isAlive</code></div>
+      <div class="tog"><button class="sw" aria-pressed="false" id="s2" aria-label="hasKey" onclick="bool('hasKey',this)"></button><code>hasKey</code></div>
+      <div class="tog"><button class="sw" aria-pressed="false" id="s3" aria-label="isPaused" onclick="bool('paused',this)"></button><code>isPaused</code></div>
+    </div>
+    <div><div class="door" id="door">🔒</div><div id="doort" class="mut"></div></div>
+  </div>
+  <div class="code" id="boc"></div>
+</section>
+
+<section class="slide">
+  <h2>Changing values</h2>
+  <p>The whole point of a variable is that it can change. Assign a new value with <code>=</code>. The old value is replaced.</p>
+  <div class="hud"><div class="stat"><small>score</small><b data-v="score">0</b></div></div>
+  <div class="row"><button class="p" onclick="chg('score = score + 10')">score = score + 10</button><button class="p" onclick="chg('score = score * 2')">score = score * 2</button><button class="d" onclick="chg('score = 0')">score = 0</button></div>
+  <div class="code" id="hist">History appears here</div>
+</section>
+
+<section class="slide">
+  <h2>Mini game: catch the coins</h2>
+  <p>Click 🪙 to raise <code>score</code> and <code>coins</code>. Click 💣 and <code>lives</code> drops. Two variables, one game.</p>
+  <div class="hud">
+    <div class="stat"><small>score</small><b data-v="score">0</b></div>
+    <div class="stat"><small>coins</small><b data-v="coins">0</b></div>
+    <div class="stat"><small>lives</small><b data-v="lives">3</b></div>
+  </div>
+  <div class="arena" id="ar"></div>
+  <div class="row"><button class="p" id="go" onclick="play()">Start game</button><span id="gm" class="mut"></span></div>
+</section>
+
+<section class="slide">
+  <h2>Naming rules</h2>
+  <p>Good names say what the value is. Tap a name to check if it works.</p>
+  <div class="row" id="names"></div>
+  <div class="panel" id="namex" style="min-height:70px">Tap a name.</div>
+</section>
+
+<section class="slide">
+  <h2>Data types at a glance</h2>
+  <table>
+    <tr><th>Type</th><th>Example</th><th>Game use</th></tr>
+    <tr><td>Number</td><td><code class="n">100</code></td><td>score, health, coins</td></tr>
+    <tr><td>Text</td><td><code class="s">"Sceat"</code></td><td>playerName, message</td></tr>
+    <tr><td>Boolean</td><td><code class="b">true</code></td><td>isAlive, hasKey</td></tr>
+  </table>
+  <p class="mut">Same variable, different type: <code>100</code> is a number, <code>"100"</code> is text.</p>
+</section>
+
+<section class="slide">
+  <h2>let vs const</h2>
+  <p><code>let</code> makes a value you can change. <code>const</code> locks it. Use const for things that never change, like the max lives.</p>
+  <div class="code"><span class="k">let</span> <span class="v">lives</span> = <span class="n">3</span>;
+<span class="k">const</span> <span class="v">maxLives</span> = <span class="n">3</span>;</div>
+  <div class="row"><button class="p" onclick="lc('let')">lives = 2</button><button class="d" onclick="lc('const')">maxLives = 5</button></div>
+  <div class="code" id="lcr">Try both buttons</div>
+</section>
+
+<section class="slide">
+  <h2>Quick quiz: what type is it?</h2>
+  <div class="panel" style="text-align:center"><div class="code" id="qv" style="display:inline-block;font-size:1.6em"></div></div>
+  <div class="row" style="justify-content:center"><button onclick="ans('Number')">Number</button><button onclick="ans('Text')">Text</button><button onclick="ans('Boolean')">Boolean</button></div>
+  <div id="qf" class="mut" style="text-align:center;min-height:30px"></div>
+</section>
+
+<section class="slide">
+  <h1 style="font-size:clamp(20px,4vw,40px)">Level complete</h1>
+  <div class="panel"><p>A variable is a named box for a value.<br>Numbers count things. Text holds words. Booleans are on/off switches.<br>Assign with <code>=</code> to change a value. Use <code>const</code> when it must never change.</p></div>
+  <p class="mut">Next level: operators and conditions.</p>
+</section>
+
+<div class="nav"><button onclick="go(-1)" aria-label="Previous slide">Back</button><div class="dots" id="dots"></div><button class="p" onclick="go(1)" aria-label="Next slide">Next</button></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const D={score:0,health:100,lives:3,coins:0,name:'Player1',alive:true,hasKey:false,paused:false};
+const G=Object.assign({},D);
+function sync(){document.querySelectorAll('[data-v]').forEach(e=>e.textContent=G[e.dataset.v]);document.querySelectorAll('[data-bar]').forEach(e=>{const h=G.health;e.style.width=h+'%';e.style.background=h>50?'var(--grn)':h>25?'var(--gold)':'var(--red)'})}
+function reset(){Object.assign(G,D);sync();txt();$('hist').textContent='History appears here'}
+// slide nav
+const S=[...document.querySelectorAll('.slide')];let cur=0,timer=null;
+S.forEach(()=>$('dots').appendChild(document.createElement('i')));
+function show(i){cur=Math.max(0,Math.min(S.length-1,i));S.forEach((s,j)=>s.classList.toggle('on',j===cur));[...$('dots').children].forEach((d,j)=>d.classList.toggle('on',j===cur));stop();sync();location.hash=cur+1}
+function go(d){show(cur+d)}
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1)});
+// slide 2
+function store(){const v=$('bxin').value||0;$('bxv').textContent=v;$('bxc').innerHTML='<span class="v">score</span> = <span class="n">'+v+'</span>';const b=$('bx');b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop')}
+// slide 3
+const A=[['let','k','Keyword. Tells the computer: make a new variable.'],['score','v','The name. This is the label on the box.'],['=','','Assignment. Put the value on the right into the box on the left.'],['0','n','The value stored in the box. Here it is a number.'],[';','','End of the instruction.']];
+A.forEach(a=>{const b=document.createElement('button');b.className='chip '+a[1];b.textContent=a[0];b.onclick=()=>{[...$('anat').children].forEach(c=>c.classList.remove('a'));b.classList.add('a');$('anatx').innerHTML='<b>'+a[0]+'</b>: '+a[2]};$('anat').appendChild(b)});
+// slide 4
+function run(l,k,n){G[k]=Math.max(0,G[k]+n);if(k=='health')G[k]=Math.min(100,G[k]);$('lastn').innerHTML=l+'   <span class="mut">// now '+k+' is '+G[k]+'</span>';sync()}
+// slide 5
+function txt(){const n=G.name;$('nmc').innerHTML='<span class="k">let</span> <span class="v">playerName</span> = <span class="s">"'+n.replace(/</g,'&lt;')+'"</span>;';$('nmg').textContent='Welcome, '+n+'!';$('nml').textContent='Length: '+n.length+' characters'}
+txt();
+// slide 6
+function bool(k,b){G[k]=!G[k];b.setAttribute('aria-pressed',G[k]);doorU()}
+function doorU(){const ok=G.alive&&G.hasKey&&!G.paused;$('door').textContent=!G.alive?'💀':G.paused?'⏸️':ok?'🚪':'🔒';$('doort').textContent=!G.alive?'Game over: isAlive is false':G.paused?'Paused':ok?'Door opens: hasKey is true':'Locked: you need the key';$('boc').innerHTML='<span class="v">isAlive</span> = <span class="b">'+G.alive+'</span>\n<span class="v">hasKey</span> = <span class="b">'+G.hasKey+'</span>\n<span class="v">isPaused</span> = <span class="b">'+G.paused+'</span>'}
+doorU();
+// slide 7
+const H=[];function chg(l){G.score=l.includes('+')?G.score+10:l.includes('*')?G.score*2:0;H.push(l+'   // score is '+G.score);if(H.length>5)H.shift();$('hist').textContent=H.join('\n');sync()}
+// slide 8 game
+function stop(){clearInterval(timer);timer=null;if($('go'))$('go').textContent='Start game'}
+const ar=$('ar');for(let i=0;i<15;i++){const c=document.createElement('button');c.className='cell';c.onclick=()=>hit(c);ar.appendChild(c)}
+function hit(c){if(!timer||!c.textContent)return;if(c.textContent=='🪙'){G.score+=10;G.coins++}else{G.lives--;if(G.lives<=0){stop();$('gm').textContent='Game over: lives is 0';}}c.textContent='';sync()}
+function play(){if(timer){stop();return}G.score=0;G.coins=0;G.lives=3;sync();$('gm').textContent='';$('go').textContent='Stop';timer=setInterval(()=>{const cs=[...ar.children];cs.forEach(c=>c.textContent='');const c=cs[Math.floor(Math.random()*15)];c.textContent=Math.random()<.7?'🪙':'💣'},900)}
+// slide 9
+const N=[['playerName',1,'Clear and describes the value. camelCase is the common style.'],['1stScore',0,'Cannot start with a digit.'],['my score',0,'No spaces allowed. Try myScore.'],['lives',1,'Short and clear.'],['coin-count',0,'A dash is read as minus. Try coinCount.'],['maxHealth',1,'Good: max + what it measures.']];
+N.forEach(n=>{const b=document.createElement('button');b.className='chip';b.textContent=n[0];b.onclick=()=>{$('namex').innerHTML='<b class="'+(n[1]?'ok':'bad')+'">'+(n[1]?'Valid':'Invalid')+'</b>: '+n[2]};$('names').appendChild(b)});
+// slide 11
+function lc(t){$('lcr').innerHTML=t=='let'?'<span class="ok">lives changed to 2. let allows it.</span>':'<span class="bad">TypeError: Assignment to constant variable.</span>'}
+// slide 12
+const Q=[['250','Number'],['"Sceat"','Text'],['true','Boolean'],['"100"','Text'],['false','Boolean'],['3.5','Number']];let qi=0;
+function qn(){$('qv').textContent=Q[qi%Q.length][0]}
+function ans(a){const r=Q[qi%Q.length];$('qf').innerHTML=a==r[1]?'<b class="ok">Correct!</b>':'<b class="bad">Not quite:</b> '+r[0]+' is '+r[1]+(r[0]=='"100"'?' (quotes make it text)':'');qi++;setTimeout(qn,1400)}
+qn();
+show(parseInt(location.hash.slice(1))-1||0);
+</script>
+</body>
+</html>
